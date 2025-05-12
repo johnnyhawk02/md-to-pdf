@@ -1,0 +1,187 @@
+/* General styles */
+:root {
+  --primary-color: #3498db;
+  --primary-dark: #2980b9;
+  --secondary-color: #2ecc71;
+  --secondary-dark: #27ae60;
+  --background-color: #f5f7fa;
+  --text-color: #2c3e50;
+  --border-color: #e0e6ed;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  padding: 0;
+  margin: 0;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header styles */
+header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+header h1 {
+  margin-bottom: 10px;
+  color: var(--primary-color);
+}
+
+header p {
+  color: #7f8c8d;
+}
+
+/* Main content area */
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Drop area styles */
+.drop-area {
+  border: 2px dashed var(--border-color);
+  border-radius: 8px;
+  padding: 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.drop-area.active {
+  border-color: var(--primary-color);
+  background-color: rgba(52, 152, 219, 0.05);
+}
+
+.drop-area-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.icon {
+  width: 60px;
+  height: 60px;
+  opacity: 0.8;
+}
+
+/* Button styles */
+.button {
+  display: inline-block;
+  background-color: var(--primary-color);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+  font-weight: 500;
+  text-align: center;
+}
+
+.button:hover {
+  background-color: var(--primary-dark);
+}
+
+.button.primary {
+  background-color: var(--secondary-color);
+}
+
+.button.primary:hover {
+  background-color: var(--secondary-dark);
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #95a5a6;
+  font-size: 16px;
+  transition: var(--transition);
+}
+
+.icon-button:hover {
+  color: #e74c3c;
+}
+
+/* File preview styles */
+.file-preview {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+  box-shadow: 0 2px 10px var(--shadow-color);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.file-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Progress bar styles */
+.progress {
+  margin-top: 20px;
+}
+
+.progress-bar {
+  height: 8px;
+  background-color: var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.progress-bar-inner {
+  height: 100%;
+  background-color: var(--secondary-color);
+  width: 0%;
+  transition: width 0.3s;
+}
+
+#progress-text {
+  font-size: 14px;
+  color: #7f8c8d;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  margin-top: 40px;
+  font-size: 14px;
+  color: #95a5a6;
+}
+
+/* Utility classes */
+.hidden {
+  display: none;
+}

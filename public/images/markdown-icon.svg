@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="208px" height="128px" viewBox="0 0 208 128" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="markdown" fill="#3498DB" fill-rule="nonzero">
+            <path d="M193.143,0 L14.857,0 C6.656,0 0,6.656 0,14.857 L0,113.143 C0,121.344 6.656,128 14.857,128 L193.143,128 C201.344,128 208,121.344 208,113.143 L208,14.857 C208,6.656 201.344,0 193.143,0 Z M117,96 L91,96 L91,58.857 L71.5,78.357 L52,58.857 L52,96 L26,96 L26,32 L52,32 L71.5,51.5 L91,32 L117,32 L117,96 Z M130,61.902 L146.5,83.902 L163,61.902 L182,61.902 L182,96 L156,96 L156,80 L130,61.902 Z" id="Combined-Shape"></path>
+        </g>
+    </g>
+</svg>
