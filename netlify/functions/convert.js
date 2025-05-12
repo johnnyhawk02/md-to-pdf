@@ -62,10 +62,28 @@ function getTempDir() {
   return tempDir;
 }
 
-// Create a test endpoint
+// Create a test endpoint to verify the function is working
 app.get('/', (req, res) => {
   console.log("Test endpoint called");
-  res.status(200).json({ message: "Markdown to PDF Converter API is running" });
+  
+  // Show environment info for debugging
+  const env = {
+    tempDir: os.tmpdir(),
+    nodeEnv: process.env.NODE_ENV,
+    netlifyDev: process.env.NETLIFY_DEV, 
+    functionName: process.env.AWS_LAMBDA_FUNCTION_NAME,
+    deployTimestamp: new Date().toISOString()
+  };
+  
+  res.status(200).json({ 
+    message: "Markdown to PDF Converter API is running",
+    environment: env
+  });
+});
+
+// Add a ping route for status checks
+app.get('/ping', (req, res) => {
+  res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
 // Create a specific route for the conversion
@@ -159,7 +177,11 @@ app.post('/convert', upload.single('markdown'), async (req, res) => {
       
     } catch (err) {
       console.error('PDF generation error:', err);
-      return res.status(500).json({ error: 'Error generating PDF' });
+      return res.status(500).json({ 
+        error: 'Error generating PDF',
+        message: err.message,
+        stack: process.env.NODE_ENV !== 'production' ? err.stack : undefined
+      });
     } finally {
       // Clean up temporary files
       try {
@@ -172,7 +194,14 @@ app.post('/convert', upload.single('markdown'), async (req, res) => {
     }
   } catch (error) {
     console.error('Conversion error:', error);
-    return res.status(500).json({ error: 'Error converting markdown to PDF' });
+    return res.status(500).json({ 
+      error: 'Error converting markdown to PDF',
+      message: error.message,
+      details: {
+        tempDir: os.tmpdir(),
+        functionPath: __dirname
+      }
+    });
   }
 });
 

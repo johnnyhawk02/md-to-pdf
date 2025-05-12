@@ -5,8 +5,15 @@
   functions = "netlify/functions"
   
 [functions]
+  # Use esbuild for faster builds
   node_bundler = "esbuild"
+  
+  # Don't bundle these modules (they contain native code)
   external_node_modules = ["markdown-pdf", "phantomjs-prebuilt"]
+  
+  # Increase timeout for PDF generation
+  [functions.convert]
+    timeout = 30
 
 # Redirect API requests to serverless functions
 [[redirects]]

@@ -189,42 +189,29 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Open and send the request
-    // Use the appropriate API endpoint based on the environment
+    // Always use Netlify's proper functions path in production
     let apiUrl;
     if (window.location.hostname === 'localhost') {
       apiUrl = '/api/convert';
     } else {
-      // Try Netlify's default functions path
+      // Always use Netlify's direct functions path in production
       apiUrl = '/.netlify/functions/convert';
       console.log('Using Netlify functions path:', apiUrl);
     }
     
-    // Add endpoint availability check
-    checkEndpoint(apiUrl)
-      .then(available => {
-        if (!available && !window.location.hostname.includes('localhost')) {
-          console.log(`Primary endpoint ${apiUrl} not available, trying alternate...`);
-          apiUrl = '/api/convert'; // Try the redirected path as fallback
-        }
-        
-        xhr.open('POST', apiUrl);
-        xhr.responseType = 'blob';
-        xhr.send(formData);
-        
-        // Log for debugging purposes
-        console.log('Sending request to:', apiUrl);
-      });
+    // No fallback, always use the proper path
+    xhr.open('POST', apiUrl);
+    xhr.responseType = 'blob';
+    xhr.send(formData);
+    
+    // Log for debugging purposes
+    console.log('Sending request to:', apiUrl);
   }
   
-  // Function to check if endpoint is available
-  async function checkEndpoint(url) {
-    try {
-      const response = await fetch(url, { method: 'OPTIONS' });
-      return response.ok;
-    } catch (error) {
-      console.warn(`Endpoint ${url} check failed:`, error);
-      return false;
-    }
+  // Function for future diagnostics if needed
+  function logEndpointInfo(url) {
+    console.log(`Using API endpoint: ${url}`);
+    console.log(`Full URL: ${window.location.origin}${url}`);
   }
 
   // Get error container elements
