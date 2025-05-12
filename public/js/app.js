@@ -170,7 +170,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Open and send the request
-    xhr.open('POST', '/api/convert');
+    // Use the appropriate API endpoint based on the environment
+    const apiUrl = window.location.hostname === 'localhost' ? '/api/convert' : '/.netlify/functions/convert';
+    xhr.open('POST', apiUrl);
     xhr.responseType = 'blob';
     xhr.send(formData);
   }

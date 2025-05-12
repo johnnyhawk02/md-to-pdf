@@ -36,6 +36,19 @@ A simple web application that allows you to convert Markdown (.md) files to good
 
 4. Open your browser and navigate to [http://localhost:3000](http://localhost:3000)
 
+## Deploying to Netlify
+
+This application is configured to work with Netlify using serverless functions:
+
+1. Push your code to GitHub (or another Git provider supported by Netlify)
+2. Log in to Netlify and create a new site from Git
+3. Select your repository and use these build settings:
+   - Build command: `npm install`
+   - Publish directory: `public`
+4. Click "Deploy site"
+
+The application will automatically use the serverless function for the conversion process when deployed to Netlify.
+
 ## Development
 
 To run the application in development mode with automatic server restarts:

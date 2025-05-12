@@ -1,0 +1,11 @@
+# Netlify configuration file
+[build]
+  command = "npm install"
+  publish = "public"
+  functions = "netlify/functions"
+
+# Redirect API requests to serverless functions
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200

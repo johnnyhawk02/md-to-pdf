@@ -5,6 +5,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
+    "build": "mkdir -p public/css && cp -r public/css public/ && cp -r public/js public/ && cp -r public/images public/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -15,7 +16,8 @@
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "markdown-pdf": "^11.0.0",
-    "multer": "^1.4.5-lts.2"
+    "multer": "^1.4.5-lts.2",
+    "serverless-http": "^3.2.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"
