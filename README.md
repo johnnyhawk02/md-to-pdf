@@ -20,7 +20,7 @@ A simple web application that allows you to convert Markdown (.md) files to good
 
 1. Clone this repository:
    ```
-   git clone https://github.com/yourusername/md-to-pdf.git
+   git clone https://github.com/johnnyhawk02/md-to-pdf.git
    cd md-to-pdf
    ```
 
