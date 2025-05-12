@@ -181,7 +181,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     xhr.addEventListener('error', () => {
-      handleError('Network error occurred');
+      handleError(`Network error occurred. The API endpoint may be unavailable.`, 
+        `Could not connect to ${apiUrl}. Please check:\n` +
+        `1. If you're connected to the internet\n` +
+        `2. Visit the status page using the link in the footer\n` +
+        `3. Try accessing ${window.location.origin}/.netlify/functions/debug directly to check if functions are working`
+      );
     });
 
     xhr.addEventListener('abort', () => {
@@ -240,9 +245,10 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       errorDetails = `Error: ${message}\n\nTroubleshooting tips:\n` +
         `1. Check if the Netlify function is accessible at: ${window.location.origin}/.netlify/functions/convert\n` +
-        `2. Check your browser console for more details\n` +
-        `3. Try a different browser\n` +
-        `4. If using adblocker, try disabling it`;
+        `2. Check if the Debug function works: ${window.location.origin}/.netlify/functions/debug\n` +
+        `3. Check your browser console for more details\n` +
+        `4. Try a different browser\n` +
+        `5. If using adblocker, try disabling it`;
     }
     
     // Show the error container with details

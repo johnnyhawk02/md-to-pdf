@@ -77,7 +77,8 @@ app.get('/', (req, res) => {
   
   res.status(200).json({ 
     message: "Markdown to PDF Converter API is running",
-    environment: env
+    environment: env,
+    usage: "Send a POST request with a file in form-data with the key 'markdown'"
   });
 });
 
@@ -86,8 +87,21 @@ app.get('/ping', (req, res) => {
   res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-// Create a specific route for the conversion
-app.post('/convert', upload.single('markdown'), async (req, res) => {
+// Root path for easier testing
+app.all('*', (req, res) => {
+  if (req.method === 'GET' && req.path !== '/' && req.path !== '/ping') {
+    res.status(200).json({
+      status: "ok", 
+      message: "Markdown to PDF Converter API endpoint", 
+      usage: "Send a POST request to /.netlify/functions/convert with a file in form-data with the key 'markdown'",
+      availablePaths: ["/", "/ping"],
+      currentPath: req.path
+    });
+  }
+});
+
+// Create a specific route for the conversion - handle both root path and /convert path
+app.post(['/', '/convert'], upload.single('markdown'), async (req, res) => {
   console.log("Convert endpoint called");
   
   try {
