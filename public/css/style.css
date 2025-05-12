@@ -173,12 +173,80 @@ main {
   color: #7f8c8d;
 }
 
+/* Error container */
+.error-container {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #ffecec;
+  border: 1px solid #f5aca6;
+  border-radius: 4px;
+}
+
+.error-container h3 {
+  color: #e74c3c;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.error-container pre {
+  background-color: #fff;
+  padding: 10px;
+  border: 1px solid #e0e6ed;
+  border-radius: 4px;
+  overflow-x: auto;
+  max-height: 200px;
+}
+
 /* Footer */
 footer {
   text-align: center;
   margin-top: 40px;
   font-size: 14px;
   color: #95a5a6;
+}
+
+footer .version {
+  margin-top: 5px;
+  font-size: 12px;
+}
+
+footer a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+/* Error container styles */
+.error-container {
+  background-color: #fff4f4;
+  border: 1px solid #ffcdd2;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.error-container h3 {
+  color: #d32f2f;
+  margin-bottom: 10px;
+}
+
+.error-container pre {
+  background-color: #f8f8f8;
+  padding: 15px;
+  border-radius: 4px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  font-family: monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+  margin-bottom: 15px;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 /* Utility classes */

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Status Check</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    .status {
+      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 5px;
+    }
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .pending {
+      background-color: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeeba;
+    }
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    pre {
+      background-color: #f8f9fa;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Markdown to PDF API Status</h1>
+  
+  <div id="status-container">
+    <div class="status pending">
+      <p>Checking API endpoints...</p>
+    </div>
+  </div>
+  
+  <h2>Endpoints to check:</h2>
+  <ul id="endpoints-list"></ul>
+  
+  <div>
+    <h2>Test API with your Markdown file</h2>
+    <input type="file" id="file-input" accept=".md,text/markdown" />
+    <button id="test-button">Test Conversion</button>
+  </div>
+  
+  <div id="test-result" style="margin-top: 20px;"></div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const statusContainer = document.getElementById('status-container');
+      const endpointsList = document.getElementById('endpoints-list');
+      const fileInput = document.getElementById('file-input');
+      const testButton = document.getElementById('test-button');
+      const testResult = document.getElementById('test-result');
+      
+      // Endpoints to check
+      const endpoints = [
+        '/.netlify/functions/convert',
+        '/api/convert',
+        '/functions/convert'
+      ];
+      
+      // Populate endpoints list
+      endpoints.forEach(endpoint => {
+        const li = document.createElement('li');
+        li.textContent = `${window.location.origin}${endpoint}`;
+        endpointsList.appendChild(li);
+      });
+      
+      // Check each endpoint
+      Promise.all(endpoints.map(checkEndpoint))
+        .then(results => {
+          const available = results.some(r => r.available);
+          statusContainer.innerHTML = '';
+          
+          if (available) {
+            const workingEndpoints = results
+              .filter(r => r.available)
+              .map(r => r.endpoint);
+              
+            statusContainer.innerHTML = `
+              <div class="status success">
+                <h3>✅ API is Available</h3>
+                <p>Working endpoints:</p>
+                <ul>${workingEndpoints.map(e => `<li>${e}</li>`).join('')}</ul>
+              </div>
+            `;
+          } else {
+            statusContainer.innerHTML = `
+              <div class="status error">
+                <h3>❌ API Unavailable</h3>
+                <p>None of the endpoints are responding correctly.</p>
+                <p>Please check your Netlify deployment settings.</p>
+              </div>
+            `;
+          }
+          
+          // Add detailed results
+          const detailsDiv = document.createElement('div');
+          detailsDiv.innerHTML = `
+            <h3>Detailed Results:</h3>
+            <pre>${JSON.stringify(results, null, 2)}</pre>
+          `;
+          statusContainer.appendChild(detailsDiv);
+        });
+      
+      // Test button
+      testButton.addEventListener('click', () => {
+        if (!fileInput.files[0]) {
+          testResult.innerHTML = '<p class="error">Please select a markdown file first.</p>';
+          return;
+        }
+        
+        const file = fileInput.files[0];
+        testEndpointWithFile(file);
+      });
+      
+      // Function to check if endpoint is available
+      async function checkEndpoint(endpoint) {
+        try {
+          const response = await fetch(endpoint, { 
+            method: 'OPTIONS',
+            headers: {
+              'Accept': 'application/json'
+            }
+          });
+          
+          return {
+            endpoint,
+            available: response.ok,
+            status: response.status,
+            statusText: response.statusText
+          };
+        } catch (error) {
+          return {
+            endpoint,
+            available: false,
+            error: error.toString()
+          };
+        }
+      }
+      
+      // Function to test an endpoint with a file
+      async function testEndpointWithFile(file) {
+        testResult.innerHTML = '<p class="pending">Testing conversion...</p>';
+        
+        // Find a working endpoint
+        const workingEndpoint = (await Promise.all(endpoints.map(checkEndpoint)))
+          .find(r => r.available)?.endpoint || '/.netlify/functions/convert';
+        
+        const formData = new FormData();
+        formData.append('markdown', file);
+        
+        try {
+          const response = await fetch(workingEndpoint, {
+            method: 'POST',
+            body: formData
+          });
+          
+          if (response.ok) {
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            testResult.innerHTML = `
+              <div class="status success">
+                <h3>✅ Conversion Successful!</h3>
+                <p>Your file was successfully converted. <a href="${url}" download="${file.name.replace('.md', '.pdf')}">Download PDF</a></p>
+              </div>
+            `;
+          } else {
+            let errorText = `Status: ${response.status} ${response.statusText}`;
+            try {
+              const errorData = await response.text();
+              errorText += `<pre>${errorData}</pre>`;
+            } catch (e) {}
+            
+            testResult.innerHTML = `
+              <div class="status error">
+                <h3>❌ Conversion Failed</h3>
+                <p>${errorText}</p>
+              </div>
+            `;
+          }
+        } catch (error) {
+          testResult.innerHTML = `
+            <div class="status error">
+              <h3>❌ Conversion Failed</h3>
+              <p>Error: ${error.toString()}</p>
+            </div>
+          `;
+        }
+      }
+    });
+  </script>
+</body>
+</html>

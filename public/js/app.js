@@ -133,6 +133,19 @@ document.addEventListener('DOMContentLoaded', () => {
         progressText.textContent = 'Download starting...';
         progressBarInner.style.width = '100%';
         
+        // Check if the response is actually a PDF
+        const contentType = xhr.getResponseHeader('Content-Type');
+        if (!contentType || !contentType.includes('application/pdf')) {
+          try {
+            // Try to parse as JSON error
+            const errorResponse = JSON.parse(new TextDecoder().decode(xhr.response));
+            handleError('Conversion failed', errorResponse);
+            return;
+          } catch (e) {
+            // Not JSON, continue with download
+          }
+        }
+        
         // Handle the PDF file download
         const blob = xhr.response;
         const url = window.URL.createObjectURL(blob);
@@ -157,7 +170,13 @@ document.addEventListener('DOMContentLoaded', () => {
           fileInput.value = '';
         }, 1500);
       } else {
-        handleError('Conversion failed');
+        try {
+          // Try to parse as JSON error
+          const errorResponse = JSON.parse(new TextDecoder().decode(xhr.response));
+          handleError(`Conversion failed: ${xhr.status}`, errorResponse);
+        } catch (e) {
+          handleError(`Conversion failed: ${xhr.status}`);
+        }
       }
     });
 
@@ -171,16 +190,77 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Open and send the request
     // Use the appropriate API endpoint based on the environment
-    const apiUrl = window.location.hostname === 'localhost' ? '/api/convert' : '/.netlify/functions/convert';
-    xhr.open('POST', apiUrl);
-    xhr.responseType = 'blob';
-    xhr.send(formData);
+    let apiUrl;
+    if (window.location.hostname === 'localhost') {
+      apiUrl = '/api/convert';
+    } else {
+      // Try Netlify's default functions path
+      apiUrl = '/.netlify/functions/convert';
+      console.log('Using Netlify functions path:', apiUrl);
+    }
+    
+    // Add endpoint availability check
+    checkEndpoint(apiUrl)
+      .then(available => {
+        if (!available && !window.location.hostname.includes('localhost')) {
+          console.log(`Primary endpoint ${apiUrl} not available, trying alternate...`);
+          apiUrl = '/api/convert'; // Try the redirected path as fallback
+        }
+        
+        xhr.open('POST', apiUrl);
+        xhr.responseType = 'blob';
+        xhr.send(formData);
+        
+        // Log for debugging purposes
+        console.log('Sending request to:', apiUrl);
+      });
+  }
+  
+  // Function to check if endpoint is available
+  async function checkEndpoint(url) {
+    try {
+      const response = await fetch(url, { method: 'OPTIONS' });
+      return response.ok;
+    } catch (error) {
+      console.warn(`Endpoint ${url} check failed:`, error);
+      return false;
+    }
   }
 
+  // Get error container elements
+  const errorContainer = document.getElementById('error-container');
+  const errorMessage = document.getElementById('error-message');
+  const closeError = document.getElementById('close-error');
+  
+  // Close error button
+  closeError.addEventListener('click', () => {
+    errorContainer.classList.add('hidden');
+  });
+  
   // Handle conversion errors
-  function handleError(message) {
+  function handleError(message, details = null) {
     progressText.textContent = message;
     progressBarInner.style.backgroundColor = '#e74c3c';
+    
+    console.error('Conversion error:', message);
+    
+    // Prepare error details
+    let errorDetails = '';
+    
+    if (details) {
+      console.error('Error details:', details);
+      errorDetails = typeof details === 'object' ? JSON.stringify(details, null, 2) : details;
+    } else {
+      errorDetails = `Error: ${message}\n\nTroubleshooting tips:\n` +
+        `1. Check if the Netlify function is accessible at: ${window.location.origin}/.netlify/functions/convert\n` +
+        `2. Check your browser console for more details\n` +
+        `3. Try a different browser\n` +
+        `4. If using adblocker, try disabling it`;
+    }
+    
+    // Show the error container with details
+    errorMessage.textContent = errorDetails;
+    errorContainer.classList.remove('hidden');
     
     // Reset UI after a delay
     setTimeout(() => {

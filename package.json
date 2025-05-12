@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "build": "mkdir -p public/css && cp -r public/css public/ && cp -r public/js public/ && cp -r public/images public/",
+    "build": "mkdir -p netlify/functions/public/css && cp public/css/pdf-style.css netlify/functions/public/css/ && echo 'Build completed'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

@@ -43,11 +43,21 @@ This application is configured to work with Netlify using serverless functions:
 1. Push your code to GitHub (or another Git provider supported by Netlify)
 2. Log in to Netlify and create a new site from Git
 3. Select your repository and use these build settings:
-   - Build command: `npm install`
+   - Build command: `npm install && npm run build`
    - Publish directory: `public`
+   - Functions directory: `netlify/functions`
 4. Click "Deploy site"
 
 The application will automatically use the serverless function for the conversion process when deployed to Netlify.
+
+### Troubleshooting Netlify Deployment
+
+If you encounter issues with the Netlify deployment:
+
+1. Check the API status page at `your-site-url/status.html` to verify endpoint availability
+2. Review the Netlify function logs in the Netlify dashboard under Functions > convert
+3. Make sure the PhantomJS dependencies are properly installed by checking the build logs
+4. Try redeploying with the Clear cache and deploy site option in Netlify
 
 ## Development
 
